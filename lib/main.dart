@@ -12,15 +12,11 @@ class MyApp extends StatelessWidget {
               title: new Text("貸し借りメモタイトル"),
             ),
             body: new Center(
-              child: new Column(
-                children: <Widget>[
-                  new Text(
-                      "貸し借りメモですよ"
-                  )
-                ]
+                child:new Text(
+                    "貸し借りメモですよ"
+                )
             )
-        )
-    ),
+          )
     );
   }
 }
