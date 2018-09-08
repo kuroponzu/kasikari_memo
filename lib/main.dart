@@ -88,7 +88,6 @@ class _MyInputFormState extends State<InputForm> {
                 value: "rent",
                 groupValue: lendorrent,
                 title: new Text("借りた"),
-//                          selected:true,
                 onChanged: (String value){
                   _setLendorRent(value);
                   print("借りたに設定しました");
