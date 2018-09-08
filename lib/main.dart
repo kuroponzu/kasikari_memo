@@ -67,12 +67,12 @@ class _MyInputFormState extends State<InputForm> {
             onPressed: () {
               print("保存ボタンを押しました");
               }
-    ),
+          ),
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: (){
               print("削除ボタンを押しました");
-  },
+              },
           )
         ],
       ),
@@ -110,15 +110,6 @@ class _MyInputFormState extends State<InputForm> {
                   hintText: '相手の名前',
                   labelText: 'Name',
                 ),
-                onSaved: (String value) {
-                  this._data.user = value;
-                },
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return '名前は必須入力項目です';
-                  }
-                },
-                initialValue: _data.user,
               ),
 
               new TextFormField(
@@ -128,15 +119,6 @@ class _MyInputFormState extends State<InputForm> {
                   hintText: '借りたもの、貸したもの',
                   labelText: 'loan',
                 ),
-                onSaved: (String value) {
-                  this._data.loan = value;
-                },
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return '借りたもの、貸したものは必須入力項目です';
-                  }
-                },
-                initialValue: _data.loan,
               ),
 
               new Text("締め切り日：${date.toString()}"),
