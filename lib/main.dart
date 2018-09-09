@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 void main() => runApp(new MyApp());
 
@@ -8,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
           title: ("貸し借りメモタイトル"),
-          home: InputForm(),
+          home: _List(),
     );
   }
 }
@@ -24,6 +26,14 @@ class _formData {
   String loan;
   DateTime date;
 }
+
+class _List extends StatefulWidget {
+  @override
+  _MyList createState() => new _MyList();
+}
+
+
+
 
 class _MyInputFormState extends State<InputForm> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
@@ -132,5 +142,65 @@ class _MyInputFormState extends State<InputForm> {
       ),
     );
     return titleSection;
+  }
+}
+
+class _MyList extends State<_List> {
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("一覧"),
+      ),
+      body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: new StreamBuilder<QuerySnapshot>(
+              stream: Firestore.instance.collection('kasikari-memo').snapshots(),
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) return const Text('Loading...');
+                return new ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: snapshot.data.documents.length,
+                  padding: const EdgeInsets.only(top: 10.0),
+                  itemBuilder: (context, index) =>
+                      _buildListItem(context, snapshot.data.documents[index]),
+                );
+              }
+          ),
+      ),
+      floatingActionButton: new FloatingActionButton(
+          child: new Icon(Icons.check),
+          onPressed: () {
+            print("新規作成ボタンを押しました");
+          }),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot document){
+    return new Card(
+      child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.android),
+              title: Text(document['name']),
+              subtitle: Text(document['loan']),
+            ),
+            new ButtonTheme.bar(
+                child: new ButtonBar(
+                  children: <Widget>[
+                    new FlatButton(
+                      child: const Text("へんしゅう"),
+                      onPressed: ()
+                        {
+                          print("編集ボタンを押しました");
+                        }
+                        ),
+                  ],
+                )
+            ),
+          ]
+      ),
+    );
   }
 }
