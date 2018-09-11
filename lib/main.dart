@@ -76,7 +76,8 @@ class _MyInputFormState extends State<InputForm> {
             icon: Icon(Icons.save),
             onPressed: () {
               print("保存ボタンを押しました");
-              }
+              Navigator.pop(context);
+            }
           ),
           IconButton(
             icon: Icon(Icons.delete),
@@ -172,6 +173,14 @@ class _MyList extends State<_List> {
           child: new Icon(Icons.check),
           onPressed: () {
             print("新規作成ボタンを押しました");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  settings: const RouteSettings(name: "/new"),
+                  builder: (BuildContext context) => new InputForm()
+              ),
+            );
+
           }),
     );
   }
@@ -194,7 +203,7 @@ class _MyList extends State<_List> {
                       onPressed: ()
                         {
                           print("編集ボタンを押しました");
-                        }
+                        },
                         ),
                   ],
                 )
