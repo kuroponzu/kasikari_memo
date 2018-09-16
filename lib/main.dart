@@ -65,6 +65,12 @@ class _MyInputFormState extends State<InputForm> {
 
   @override
   Widget build(BuildContext context) {
+    var _mainReference;
+
+    _data.lendorrent = "";
+    _data.user = "";
+    _data.loan = "";
+    _mainReference = Firestore.instance.collection('kasikari-memo').document();
 
     Widget titleSection;
     titleSection = Scaffold(
@@ -75,8 +81,15 @@ class _MyInputFormState extends State<InputForm> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
-              print("保存ボタンを押しました");
-              Navigator.pop(context);
+              _data.lendorrent = lendorrent;
+              _data.date = date;
+              if (this._formKey.currentState.validate()) {
+                _formKey.currentState.save();
+                _mainReference.setData(
+                    { 'lendorrent': _data.lendorrent, 'name': _data.user,
+                      'loan': _data.loan, 'date': _data.date});
+                Navigator.pop(context);
+              }
             }
           ),
           IconButton(
@@ -121,6 +134,15 @@ class _MyInputFormState extends State<InputForm> {
                   hintText: '相手の名前',
                   labelText: 'Name',
                 ),
+                onSaved: (String value) {
+                  this._data.user = value;
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return '名前は必須入力項目です';
+                  }
+                },
+                initialValue: _data.user,
               ),
 
               new TextFormField(
@@ -130,6 +152,15 @@ class _MyInputFormState extends State<InputForm> {
                   hintText: '借りたもの、貸したもの',
                   labelText: 'loan',
                 ),
+                onSaved: (String value) {
+                  this._data.loan = value;
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return '借りたもの、貸したものは必須入力項目です';
+                  }
+                },
+                initialValue: _data.loan,
               ),
 
               new Text("締め切り日：${date.toString()}"),
