@@ -9,13 +9,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-          title: ("貸し借りメモタイトル"),
+          title: ("貸し借りメモ"),
           home: _List(),
     );
   }
 }
 
 class InputForm extends StatefulWidget {
+
+  InputForm(this.docs);
+  final DocumentSnapshot docs;
+
   @override
   _MyInputFormState createState() => new _MyInputFormState();
 }
@@ -40,6 +44,9 @@ class _MyInputFormState extends State<InputForm> {
   _formData _data = new _formData();
   String lendorrent = "rent";
   DateTime date = new DateTime.now();
+  var change_Flg = 0;
+  var lendorrent_Flg = 0;
+
 
   void _setLendorRent(String value){
     setState(() {
@@ -66,11 +73,24 @@ class _MyInputFormState extends State<InputForm> {
   @override
   Widget build(BuildContext context) {
     var _mainReference;
-
-    _data.lendorrent = "";
-    _data.user = "";
-    _data.loan = "";
-    _mainReference = Firestore.instance.collection('kasikari-memo').document();
+    if (this.widget.docs != null) {
+      if(lendorrent_Flg == 0 && widget.docs['lendorrent'].toString() == "lend"){
+        lendorrent = "lend";
+        lendorrent_Flg = 1;
+      }
+      _data.user = widget.docs['name'];
+      _data.loan = widget.docs['loan'];
+      print(date);
+      if(change_Flg == 0) {
+        date = widget.docs['date'];
+      }
+      _mainReference = Firestore.instance.collection('promise').document(widget.docs.documentID);
+    } else {
+      _data.lendorrent = "";
+      _data.user = "";
+      _data.loan = "";
+      _mainReference = Firestore.instance.collection('promise').document();
+    }
 
     Widget titleSection;
     titleSection = Scaffold(
@@ -95,8 +115,8 @@ class _MyInputFormState extends State<InputForm> {
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: (){
-              print("削除ボタンを押しました");
-              },
+              print("削除します");
+            },
           )
         ],
       ),
@@ -208,7 +228,7 @@ class _MyList extends State<_List> {
               context,
               MaterialPageRoute(
                   settings: const RouteSettings(name: "/new"),
-                  builder: (BuildContext context) => new InputForm()
+                  builder: (BuildContext context) => new InputForm(null)
               ),
             );
 
@@ -233,7 +253,13 @@ class _MyList extends State<_List> {
                       child: const Text("へんしゅう"),
                       onPressed: ()
                         {
-                          print("編集ボタンを押しました");
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: const RouteSettings(name: "/new"),
+                            builder: (BuildContext context) => new InputForm(document)
+                          ),
+                          );
                         },
                         ),
                   ],
