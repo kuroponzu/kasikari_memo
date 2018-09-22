@@ -46,6 +46,7 @@ class _MyInputFormState extends State<InputForm> {
   DateTime date = new DateTime.now();
   var change_Flg = 0;
   var lendorrent_Flg = 0;
+  bool deleteFlg;
 
 
   void _setLendorRent(String value){
@@ -85,11 +86,13 @@ class _MyInputFormState extends State<InputForm> {
         date = widget.docs['date'];
       }
       _mainReference = Firestore.instance.collection('kasikari-memo').document(widget.docs.documentID);
+      deleteFlg = true;
     } else {
       _data.lendorrent = "";
       _data.user = "";
       _data.loan = "";
       _mainReference = Firestore.instance.collection('kasikari-memo').document();
+      deleteFlg = false;
     }
 
     Widget titleSection;
@@ -114,8 +117,9 @@ class _MyInputFormState extends State<InputForm> {
           ),
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: (){
-              print("削除します");
+            onPressed: !deleteFlg? null:() {
+              _mainReference.delete();
+              Navigator.pop(context);
             },
           )
         ],
