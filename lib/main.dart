@@ -65,6 +65,7 @@ class _MyInputFormState extends State<InputForm> {
     if(picked != null && picked != date){
       setState(() {
         date = picked;
+        change_Flg = 1;
         print(date);
       });
     }
@@ -80,16 +81,15 @@ class _MyInputFormState extends State<InputForm> {
       }
       _data.user = widget.docs['name'];
       _data.loan = widget.docs['loan'];
-      print(date);
       if(change_Flg == 0) {
         date = widget.docs['date'];
       }
-      _mainReference = Firestore.instance.collection('promise').document(widget.docs.documentID);
+      _mainReference = Firestore.instance.collection('kasikari-memo').document(widget.docs.documentID);
     } else {
       _data.lendorrent = "";
       _data.user = "";
       _data.loan = "";
-      _mainReference = Firestore.instance.collection('promise').document();
+      _mainReference = Firestore.instance.collection('kasikari-memo').document();
     }
 
     Widget titleSection;
@@ -166,7 +166,6 @@ class _MyInputFormState extends State<InputForm> {
               ),
 
               new TextFormField(
-                //controller: _myController2,
                 decoration: const InputDecoration(
                   icon: const Icon(Icons.business_center),
                   hintText: '借りたもの、貸したもの',
@@ -183,11 +182,21 @@ class _MyInputFormState extends State<InputForm> {
                 initialValue: _data.loan,
               ),
 
-              new Text("締め切り日：${date.toString()}"),
               new RaisedButton(
-                  child: new Text("締め切り日変更"),
+                  color: Colors.blue,
+                  child: new RichText(
+                      text: new TextSpan(
+                          children: <TextSpan>[
+                            new TextSpan(
+                              text: '日付変更',
+                              style: new TextStyle(color: Colors.white),
+                            )
+                          ]
+                      )
+                  ),
                   onPressed: (){_selectTime(context);}
               ),
+              new Text("締め切り日：${date.toString()}"),
             ],
           ),
         ),
@@ -237,14 +246,18 @@ class _MyList extends State<_List> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document){
+    var lendorrent = (document['lendorrent'] == "lend") ? "貸した":"借りた";
+    var date = document['date'].toString();
+
     return new Card(
       child: new Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.android),
-              title: Text(document['name']),
-              subtitle: Text(document['loan']),
+              title: Text("【" + lendorrent +"】"+ document['name']),
+              subtitle: Text('期限：'+date.substring(0,16)+'\n'
+                  "貸借り品："+document['loan']),
             ),
             new ButtonTheme.bar(
                 child: new ButtonBar(
